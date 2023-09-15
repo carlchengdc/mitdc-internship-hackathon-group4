@@ -1,0 +1,21 @@
+mlsystem:
+  platform: yoda
+  name: mua-k8sdemo-service
+  environment: dev
+  country: hk
+  errors: errors.yml
+  languages:
+    primary: en
+    languageList: en, jp, cn
+  components:
+      - component:
+          name: yourcomponent
+          properties:
+            - property:
+                name: url
+                # URL to some other service you may want to call. remove or replace in apps
+                value: "http://localhost:8081"
+                # URL for K8S environment
+                #value: "http://svc-demo-pricer-app"
+                type: string
+

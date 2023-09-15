@@ -1,0 +1,17 @@
+<cds-navigation [showNotification]="false">
+  <cds-menu>
+    <cds-menu-item icon="form:file_folder" label="Menu 1" [isAlwaysOpen]="true">
+      <!--use this if you're planning to have sub menu-->
+      <cds-sub-menu-item label="Submenu 1" ></cds-sub-menu-item>
+      <cds-sub-menu-item label="Submenu 2"></cds-sub-menu-item>
+    </cds-menu-item>
+    <cds-menu-item icon="investment:chart_1" label="Menu 2"></cds-menu-item>
+    <cds-menu-item icon="general:about" label="Menu 3"></cds-menu-item>
+  </cds-menu>
+
+  <cds-navigation-utilities></cds-navigation-utilities>
+
+  <cds-content>
+    <router-outlet></router-outlet>
+  </cds-content>
+</cds-navigation>

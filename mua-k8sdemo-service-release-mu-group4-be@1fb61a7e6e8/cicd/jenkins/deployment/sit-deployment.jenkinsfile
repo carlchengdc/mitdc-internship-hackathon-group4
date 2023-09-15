@@ -1,0 +1,8 @@
+pipelineJavaMavenAksDeployment([
+      pipelineRepository: "ssh://git@git.ap.manulife.com:8080/RSF/mua-k8sdemo-service.git",
+      pipelinePropertiesDir: "pipeline",
+      commonPropertiesFileName: "pipeline/jenkins/common-deployment.properties",
+      propertiesFileName: "pipeline/jenkins/sit-deployment.properties",
+      skipUpdateBranches: "true",
+      pipelineRepoBranches: [[name:'develop']]
+])

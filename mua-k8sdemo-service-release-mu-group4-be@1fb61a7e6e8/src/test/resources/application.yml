@@ -1,0 +1,13 @@
+---
+# for local testing, disable spring cloud config client
+spring:
+  cloud:
+    config:
+      enabled: false
+
+---
+# for local testing, disable RCS
+rsf:
+  config:
+    client:
+      enabled: false

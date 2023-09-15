@@ -1,0 +1,14 @@
+version: "3"
+services:
+  web:
+    image: mua-k8sdemo-service:1.0-SNAPSHOT
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 300M
+      restart_policy:
+         condition: on-failure
+    ports:
+      - "8080:8080"

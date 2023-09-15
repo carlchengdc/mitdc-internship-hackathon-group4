@@ -1,0 +1,39 @@
+<form class="row" [formGroup]="personForm">
+  <cds-form-field class="col-xs-12 col-sm-6 col-md-3">
+    <cds-textfield label="First Name" placeholder="Juan" formControlName="firstName"></cds-textfield>
+  </cds-form-field>
+  <cds-form-field class="col-xs-12 col-sm-6 col-md-3">
+    <cds-textfield label="Last Name" placeholder="Dela Cruz" formControlName="lastName"></cds-textfield>
+  </cds-form-field>
+  <div class="col-xs-12 col-sm-6 full-name">
+    <label>Full name:</label>
+    <span>{{ personForm.value.firstName + ' ' + personForm.value.lastName }}</span>
+  </div>
+</form>
+
+<div class="row">
+  <cds-form-field class="col-xs-12 col-sm-3">
+    <cds-textfield
+      type="text"
+      placeholder="mm/dd/yyyy"
+      label="Date of Birth"
+      [cdsDatepicker]="picker"
+      [max]="maxDate"
+      [formControl]="dobControl"></cds-textfield>
+    <cds-datepicker #picker="cdsDatepicker" ></cds-datepicker>
+  </cds-form-field>
+  <div class="col-xs-6 col-sm-3 calculate">
+    <cds-button size="sm" (click)="calculateAge()">Calculate Age</cds-button>
+  </div>
+  <div class="col-xs-6 col-sm-3 age">
+    <label>Age:</label>
+    <span>{{age?.years}}</span>
+  </div>
+</div>
+
+
+<!-- <div class="row">
+  <div class="col-xs-6 col-sm-3 set-person">
+    <cds-button size="sm" (click)="setPerson()">Set Person</cds-button>
+  </div>
+</div> -->

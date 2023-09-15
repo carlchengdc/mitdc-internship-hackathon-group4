@@ -1,0 +1,96 @@
+# Default values for release.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Default replica count is should be 1 for non-prod environment, 2 for prod environment
+replicaCount: 1
+
+appName: mua-k8sdemo-service
+version: v1
+appsystem: mua
+revisionHistoryLimit: "2"
+appVersion: 1.0-SNAPSHOT
+gitCommit: XXXXX
+
+# Define release label
+env: dev
+release: 1.0-SNAPSHOT
+tier: backend
+country: ap
+budev: sample-budev
+bu: sample-bu
+track: core
+costcenter: 1234
+pxxdata: pii
+
+container:
+  env:
+    - name: NEW_RELIC_APP_NAME
+      value: "mua-k8sdemo-service-aks-sea-emm-dev-mua-dev"
+    - name: NEW_RELIC_LICENSE_KEY
+      value: "68d93d382301e2155f7f67097ad65dcd6db76cde"
+    - name: NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+      value: "true"
+  args : ["--spring.profiles.active=dev","--newrelic.environment=MLF-PREPROD"]
+  ports:
+    - name: http
+      containerPort: 8080
+      protocol: TCP
+  livenessProbe:
+    failureThreshold: 3
+    tcpSocket: null
+    httpGet:
+      path: /actuator/health/liveness
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 100
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 5
+  readinessProbe:
+    failureThreshold: 3
+    tcpSocket: null
+    httpGet:
+      path: /actuator/health/readiness
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 80
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 10
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+virtualService:
+  gatewayName: istio-system/istio-ingressgateway
+  hosts: "*"
+  uri:
+    prefix: "/yourapiep"
+  timeout: 800ms
+  retries:
+    attempts: 3
+    perTryTimeout: 300ms
+    retryOn: 5xx
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false
+
+# Disable HPA for non-prod environment, enable for prod environment
+hpa:
+  enabled: false
+  maxReplicas: 4
+  memory: 85
+  cpu: 85
+resources:
+  limits:
+    cpu: "500m"
+    memory: "812Mi"
+  requests:
+    cpu: "100m"
+    memory: "784Mi"

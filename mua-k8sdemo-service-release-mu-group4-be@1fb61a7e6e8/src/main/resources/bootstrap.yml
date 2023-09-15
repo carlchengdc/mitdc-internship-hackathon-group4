@@ -1,0 +1,18 @@
+---
+spring:
+  application:
+    name: mua-k8sdemo-service
+
+---
+# for local development, disable spring cloud config client
+spring:
+  cloud:
+    config:
+      enabled: false
+
+---
+# for local development, disable RCS
+rsf:
+  config:
+    client:
+      enabled: false

@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-mua-k8sdemo-service
+  namespace: ns-mua-system
+  labels:
+    app: dep-mua-k8sdemo-service
+    version: v1
+    appsystem: mua
+    env: dev
+    release: 1.0-SNAPSHOT
+    tier: backend
+    country: ap
+    budev: sample-budev
+    bu: sample-bu
+    track: core
+    costcenter: "1234"
+    pxxdata: pii
+spec:
+  # Default replica count is should be 1 for non-prod environment, 2 for prod environment
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dep-mua-k8sdemo-service
+  template:
+    metadata:
+      labels:
+        app: dep-mua-k8sdemo-service
+        version: v1
+        appsystem: mua
+        env: dev
+        release: 1.0-SNAPSHOT
+        tier: backend
+        country: ap
+        budev: sample-budev
+        bu: sample-bu
+        track: core
+        costcenter: "1234"
+        pxxdata: pii
+    spec:
+      containers:
+        - name: dep-mua-k8sdemo-service
+          image: artifactory.ap.manulife.com/docker/mua-k8sdemo-service:1.0-SNAPSHOT
+          imagePullPolicy: Always
+          # TODO: should be injected from HELM
+          env:
+            - name: NEW_RELIC_APP_NAME
+              value: "mua-k8sdemo-service-aks-sea-emm-dev-mua-dev"
+            - name: NEW_RELIC_LICENSE_KEY
+              value: "68d93d382301e2155f7f67097ad65dcd6db76cde"
+            - name: NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+              value: "true"
+          args : [
+              "--spring.profiles.active=dev",
+              "--newrelic.environment=MLF-PREPROD"
+          ]
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "812Mi"
+            requests:
+              cpu: "100m"
+              memory: "784Mi"
+          ports:
+            - containerPort: 8080
+              name: http
+          livenessProbe:
+            failureThreshold: 3
+            tcpSocket: null
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 100
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            tcpSocket: null
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 80
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10

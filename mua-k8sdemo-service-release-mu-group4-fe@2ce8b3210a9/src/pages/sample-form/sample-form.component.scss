@@ -1,0 +1,11 @@
+.full-name, .age {
+  display: inline-flex;
+  flex-direction: column;
+
+  line-height: 26px;
+}
+
+
+.row {
+  margin-bottom: 40px;
+}

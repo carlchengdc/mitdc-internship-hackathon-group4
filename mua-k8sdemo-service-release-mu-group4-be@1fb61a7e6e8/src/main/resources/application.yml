@@ -1,0 +1,87 @@
+---
+spring:
+  # 12FA: Caching for long running services, defaults to none
+  cache:
+    type: none
+  # 12FA: cipher and externalise any data store credentials to RCS
+#  data:
+#     mongodb:
+#      host: localhost
+#      port: 27017
+#      database: policydb
+
+---
+# Security : cipher and externalise password to RCS
+spring:
+  security:
+    user:
+      name: test
+      password: test123 
+
+---
+# 12FA: Logging - WARN for all PROD environment
+logging:
+  level:
+    org.springframework: info
+    com.manulife.ap: info
+
+---
+# 12FAE: Management endpoints
+management:
+  metrics:
+    enabled: true
+  export:
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: heapdump,loggers,threaddump,info,metrics,health,prometheus
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      livenessState:
+        enabled: true
+      readinessState:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+          show-details: always
+        readiness:
+          include: readinessState
+          show-details: always
+    # Mask sensitive attributes from spring actuator env endpoint
+    env:
+      keys-to-sanitize: .*password*., .*secret*., .*key*., .*token*, .*credentials*., .*vcap_services*., .*azure.*.connection-string.*, .*azure.*.keyvault.*, .*client_id*., .*client_key*., .*tenant_id*.,
+  info:
+    git:
+      mode: full
+
+---
+# Graceful shutdown
+server:
+  shutdown: graceful
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 6
+
+---
+# for local development, disable spring cloud config client optionally
+spring:
+  cloud:
+    config:
+      enabled: false
+
+---
+# for local development, disable RCS optionally
+rsf:
+  config:
+    client:
+      enabled: false

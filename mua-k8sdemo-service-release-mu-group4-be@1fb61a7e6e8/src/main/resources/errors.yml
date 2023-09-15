@@ -1,0 +1,14 @@
+errors:
+    error:
+        name: ME726732
+        desc: 'sample error description'
+        lang:
+            en: 'this is in english'
+            ct: 'this is in chinese traditional'
+            cs: 'this is in chinese simplified'
+            my: 'this is in malaysian'
+            ph: 'this is in philipino'
+            jp: 'this is nihongo'
+            id: 'this is bhasa indonesian'
+            th: 'this is in thai'
+

@@ -1,0 +1,214 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.manulife.ap</groupId>
+    <artifactId>mua-k8sdemo-service</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>mua-k8sdemo-service</name>
+
+    <url>https://mfc.sharepoint.com/sites/asiatemp/asiadigital/DE/Microservices/Home.aspx</url>
+    <description>Customize your project based on generated template file</description>
+
+    <!-- Identifies parent RSF pom -->
+    <parent>
+        <groupId>com.manulife.ap</groupId>
+        <artifactId>rsf-eda-parent</artifactId>
+        <version>1.1.0.RC1</version>
+        <relativePath/>
+    </parent>
+
+    <!-- Properties -->
+    <properties>
+        <docker.image.prefix>artifactory.ap.manulife.com/docker/</docker.image.prefix>
+        <dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
+        <dockerfile.skip>false</dockerfile.skip>
+
+        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+        <artifactory-maven-plugin.version>3.2.1</artifactory-maven-plugin.version>
+        <sonar.server.url>https://sonar.ap.manulife.com</sonar.server.url>
+        <sonar.login></sonar.login>
+
+        <rsf.compliance.publish>false</rsf.compliance.publish>
+        <rsf.compliance.service.url>http://localhost:8080</rsf.compliance.service.url>
+
+        <!-- values to customize -->
+        <team.name>myteam</team.name>
+        <team.your.name>myname</team.your.name>
+        <team.your.email>youremail@manulife.com</team.your.email>
+        <team.url>https://www.manulife.com</team.url>
+        <team.email>myteam@manulife.com</team.email>
+        <team.zone>HKT</team.zone>
+        <scm.projectId>RSF</scm.projectId>
+    </properties>
+
+    <!-- Source control : Need to change according to your github project -->
+    <scm>
+        <url>http://git.ap.manulife.com/${scm.projectId}/${project.artifactId}.git</url>
+        <connection>scm:git:https://git.ap.manulife.com/${scm.projectId}/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:https://git.ap.manulife.com/${scm.projectId}/${project.artifactId}.git</developerConnection>
+    </scm>
+
+    <!-- Project dependencies -->
+    <dependencies>
+        <!-- RSF EDA CORE -->
+        <dependency>
+            <groupId>com.manulife.ap</groupId>
+            <artifactId>rsf-eda-core</artifactId>
+            <version>1.1.0.RC1</version>
+        </dependency>
+    </dependencies>
+
+    <!-- Build plugins -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <addClasspath>true</addClasspath>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <addResources>true</addResources>
+                    <mainClass>${start-class}</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/cicd/docker</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>Dockerfile</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <useConfigFile>true</useConfigFile>
+                    <repository>${docker.image.prefix}${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                    <skip>${dockerfile.skip}</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <followSymLinks>false</followSymLinks>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}</directory>
+                                    <includes>
+                                        <include>Dockerfile</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Profiles -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+                <!-- Add your Sonar authentication key. If not needed keep line commented -->
+                <!-- Use authentication key. -->
+                <!-- <sonar.login></sonar.login> -->
+                <!-- Provide link to your documentation page for project. -->
+                <sonar.host.url>https://sonar.ap.manulife.com/</sonar.host.url>
+                <sonar.links.homepage>${project.url}</sonar.links.homepage>
+                <sonar.language>java</sonar.language>
+                <sonar.links.scm>${project.scm.url}</sonar.links.scm>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
+    <!-- Organization: Add your organization details here -->
+    <organization>
+        <name>${team.name}</name>
+        <url>${team.url}</url>
+    </organization>
+
+    <!-- Developers: Change to your team name, id and emails. etc... -->
+    <developers>
+        <developer>
+            <id>your-name-id</id>
+            <name>${team.your.name}</name>
+            <email>${team.your.email}</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>${team.zone}</timezone>
+        </developer>
+    </developers>
+
+    <!-- Contributors -->
+    <contributors>
+        <contributor>
+            <name>${team.your.name}-id</name>
+            <email>${team.your.email}</email>
+            <url>${project.url}</url>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>${team.zone}</timezone>
+        </contributor>
+    </contributors>
+</project>
